@@ -1,0 +1,380 @@
+/* 全局信纸质感 */
+body {
+    background-color: #fdfbf7;
+    color: #4a4a4a;
+    font-family: 'Kaiti', 'STKaiti', serif; /* 优先使用系统楷体 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+/* 信件容器限制最大宽度，阅读体验更好 */
+#letter-container {
+    max-width: 600px;
+    width: 100%;
+    line-height: 2.2;
+    font-size: 1.2rem;
+    display: none; 
+}
+
+/* 文字段落的基础样式 */
+.text-paragraph {
+    margin-bottom: 15px;
+    min-height: 1.5em; 
+}
+
+/* 照片基础状态：透明且带有柔和阴影 */
+.photo {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin: 20px 0;
+    opacity: 0;
+    transition: opacity 2s ease-in-out; /* 2秒的温柔淡入效果 */
+}
+
+/* 照片显示状态 */
+.photo.visible {
+    opacity: 1;
+}
+
+/* 按钮样式 */
+#start-btn {
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    background-color: #d4a373;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(212, 163, 115, 0.3);
+}
+
+#start-btn:hover {
+    transform: scale(1.05);
+}
+/* 封面区域整体布局：垂直居中排列 */
+#cover-section {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
+    gap: 30px; /* 图片和按钮之间的间距 */
+}
+
+/* 封面图片样式 */
+#cover-image {
+    width: 320px; /* 你可以根据照片比例修改这个宽度 */
+    max-width: 90vw; /* 适配手机屏幕 */
+    border-radius: 16px; /* 圆角让照片显得更温和 */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12); /* 添加一点高级的悬浮阴影 */
+    border: 8px solid white; /* 加一圈白边，像拍立得相纸的感觉 */
+}
+/* 这是点击进入后的混合渐变背景 */
+/* 加强版：点击进入后的混合渐变背景 */
+/* 写在 style.css 的最底部 */
+/* 优化版：通透的奶黄色为主调，右下角带一抹极淡的浅樱花粉 */
+body.pink-theme {
+    background-image: linear-gradient(135deg, #e4e4b9 0%, #FFFDE7 65%, #FFF0F5 100%) !important;
+    background-attachment: fixed !important;
+}
+/* style.css */
+/* ... 之前的样式 ... */
+
+/* 可切换照片的容器 */
+.photo-wrapper {
+    position: relative; /* 为点击提示定位 */
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+/* 增加点击手势，并且在鼠标悬停时稍微变大 */
+.clickable-photo {
+    cursor: pointer; /* 鼠标变成小手 */
+    transition: opacity 2s, transform 0.3s ease !important; /* 增加 transform 的 transition */
+}
+
+.clickable-photo:hover {
+    transform: scale(1.05); /* 悬停时稍微放大 1.05 倍 */
+}
+
+/* 点击提示标签样式 */
+.click-tip {
+    position: absolute;
+    bottom: -15px; /* 在图片底部边缘下方 */
+    background: rgba(255, 209, 220, 0.9); /* 粉色半透明 */
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    opacity: 0; /* 默认隐藏 */
+    transition: opacity 1.5s;
+}
+
+.tip-visible {
+    opacity: 1; /* 淡入显示 */
+}
+/* 🌟 扑通扑通的跳动心形样式 */
+/* 🌟 爱心喷泉特效 */
+.heart-fountain {
+    position: fixed;
+    bottom: -50px;     /* 从屏幕最下面出发 */
+    left: 50%;         /* 发射点在屏幕水平正中间 */
+    font-size: 30px;
+    pointer-events: none; /* 绝对不能阻挡妈妈点照片 */
+    z-index: 9999;     /* 让爱心飘在最顶层 */
+    animation: sprayUp ease-out forwards;
+}
+
+/* 核心喷射路径：向上飞，同时向两边扩散旋转 */
+@keyframes sprayUp {
+    0% {
+        bottom: -50px;
+        transform: translateX(0) scale(0.5) rotate(0deg);
+        opacity: 1;
+    }
+    70% {
+        opacity: 1; /* 飞到中上部时依然清晰 */
+    }
+    100% {
+        bottom: 100vh; /* 飞出屏幕最上方 */
+        /* 用 JS 传入的随机变量，决定它往左还是往右扩散 */
+        transform: translateX(var(--tx)) scale(1.5) rotate(var(--rot));
+        opacity: 0;
+    }
+}
+/* 🌟 撕纸条交互特效 */
+.tear-paper-wrapper {
+    position: relative;
+    width: 100%;
+    height: 60px; /* 纸条的高度 */
+    margin: 20px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 纸条的左右两半 */
+.paper-half {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background-color: #FFF9E6; /* 奶黄色的信纸质感 */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 悬浮阴影 */
+    transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s ease-out;
+}
+
+.paper-left {
+    left: 0;
+    border-right: 2px dashed #D1C49C; /* 中间的撕裂虚线 */
+    transform-origin: left center;
+}
+
+.paper-right {
+    right: 0;
+    border-left: 2px dashed #D1C49C;
+    transform-origin: right center;
+}
+
+/* 妈妈点击后，添加 .torn 类，让两半纸分别向两边飞出 */
+.paper-left.torn {
+    transform: translateX(-50vw) rotate(-15deg);
+    opacity: 0;
+}
+
+.paper-right.torn {
+    transform: translateX(50vw) rotate(15deg);
+    opacity: 0;
+}
+
+/* 提示文字 */
+.tear-tip {
+    position: absolute;
+    z-index: 10;
+    color: #A89F81;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    pointer-events: none; /* 防止挡住点击事件 */
+    transition: opacity 0.3s;
+}
+/* 🌟 礼物首饰盒开盒特效 */
+.gift-wrapper {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin: 30px 0 50px 0;
+    cursor: pointer;
+}
+
+.gift-box {
+    position: relative;
+    width: 100px;
+    height: 80px;
+}
+
+/* 首饰盒下半部分（丝绒红） */
+.box-body {
+    position: absolute;
+    bottom: 0;
+    width: 100px;
+    height: 50px;
+    background: #C21807; 
+    border-radius: 3px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    z-index: 3; /* 挡在项链前面 */
+}
+
+/* 盒子内部的金边 */
+.box-body::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #FFD700; 
+    z-index: 4;
+}
+
+/* 首饰盒盖子 */
+.box-lid {
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    width: 100px;
+    height: 30px;
+    background: #E32619;
+    border-radius: 3px 3px 0 0;
+    z-index: 5; /* 盖在最上面 */
+    transform-origin: bottom right;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-out;
+}
+
+/* 🎁 藏在里面的金项链 */
+.necklace-reveal {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    font-size: 120px; /* 这里控制项链的大小 */
+    opacity: 0;
+    z-index: 2; /* 初始状态：被藏在盖子和盒身后面 */
+    /* 上升动画：延迟0.3秒等盖子先开，带一点弹性 */
+    transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.27) 0.3s, opacity 0.8s 0.3s;
+    text-shadow: 0 0 25px rgba(255, 215, 0, 1); /* 强烈的金光特效 */
+}
+
+/* 🟢 妈妈点击后的【已打开】状态 */
+.gift-wrapper.opened .box-lid {
+    transform: translateY(-20px) translateX(-20px) rotate(-30deg); /* 盖子飞开 */
+    opacity: 0;
+}
+.gift-wrapper.opened .necklace-reveal {
+    transform: translateX(-50%) translateY(-80px); /* 项链缓缓升起 */
+    opacity: 1;
+    z-index: 6; /* 升起后显示在最前面 */
+}
+
+/* 提示文字 */
+.gift-tip {
+    position: absolute;
+    bottom: -35px;
+    font-size: 1rem;
+    color: #C21807;
+    font-weight: bold;
+    transition: opacity 0.3s;
+    animation: pulseTip 1.5s infinite alternate;
+}
+@keyframes pulseTip {
+    0% { transform: scale(1); opacity: 0.7; }
+    100% { transform: scale(1.05); opacity: 1; }
+}
+/* 🌟 强调段落的高亮样式 */
+.highlight-text {
+    font-size: 1.3rem; /* 字体比普通信件稍微大一点 */
+    font-weight: bold; /* 加粗 */
+    color: #C21807; /* 使用深一点的砖红色，更有感情 */
+    background: rgba(255, 235, 150, 0.8); /* 垫一层稍微明显一点的暖黄底色 */
+    padding: 10px 15px; /* 给文字周围加一圈呼吸空间 */
+    border-radius: 8px; /* 圆角显得更温和 */
+    display: inline-block;
+    margin: 15px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* 微微的浮雕感 */
+    line-height: 1.6;
+}
+/* 🌟 结尾居中文字的样式 */
+.center-text {
+    text-align: center; /* 核心：文字居中 */
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #E32619; /* 用喜庆温暖的红色收尾 */
+    margin-top: 40px; /* 和上面的内容隔开一点距离 */
+    margin-bottom: 20px;
+    letter-spacing: 2px; /* 字间距稍微拉开，更有电影字幕感 */
+}
+/* 🌟 结尾拥抱动画特效 */
+.hug-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 120px;
+    margin: 40px 0 60px 0;
+    overflow: hidden; /* 防止人物在屏幕外时撑出滚动条 */
+}
+
+.hug-emoji {
+    font-size: 70px; /* 人物的大小 */
+}
+
+/* 左边的小女孩（你） */
+.hug-left {
+    /* 动画：2秒钟跑过来，停住，保持最后的状态 */
+    animation: runRight 2s forwards cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 2; /* 跑到妈妈前面 */
+}
+
+/* 右边的妈妈 */
+.hug-right {
+    animation: runLeft 2s forwards cubic-bezier(0.25, 1, 0.5, 1);
+    z-index: 1;
+}
+
+/* 拥抱时冒出来的爱心 */
+.hug-heart {
+    position: absolute;
+    top: 0px;
+    font-size: 40px;
+    opacity: 0;
+    /* 延迟2秒（等她们抱在一起了）才冒出来 */
+    animation: popHeart 2.5s forwards 2s ease-out; 
+}
+
+/* 🏃‍♀️ 从屏幕左外侧往中间跑，最后向右微微倾斜（拥抱动作） */
+@keyframes runRight {
+    0% { transform: translateX(-100vw); }
+    100% { transform: translateX(15px) rotate(15deg); } 
+}
+
+/* 🏃‍♀️ 从屏幕右外侧往中间跑，最后向左微微倾斜（拥抱动作） */
+@keyframes runLeft {
+    0% { transform: translateX(100vw); }
+    100% { transform: translateX(-15px) rotate(-15deg); }
+}
+
+/* 💖 爱心冒出并缓缓消散 */
+@keyframes popHeart {
+    0% { opacity: 0; transform: scale(0.5) translateY(0); }
+    20% { opacity: 1; transform: scale(1.2) translateY(-20px); }
+    100% { opacity: 0; transform: scale(1.5) translateY(-80px); }
+}

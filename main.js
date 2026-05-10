@@ -285,10 +285,10 @@ function showGiftBox(item) {
         wrapper.className = 'gift-wrapper';
         
         // 构建盒子的 HTML 结构
-        // 注：如果你拍了真实项链的照片抠了图，可以把 ✨📿✨ 换成 <img src="./assets/你的项链.png" style="width:60px;">
+        // 注：如果你拍了真实项链的照片抠了图，可以把 ✨📿✨ 换成 <img src=".你的项链.png" style="width:60px;">
         wrapper.innerHTML = `
             <div class="gift-box">
-                <div class="necklace-reveal"><img src="./assets/项链.png" style="width:60px;"></div>
+                <div class="necklace-reveal"><img src="./项链.png" style="width:60px;"></div>
                 <div class="box-body"></div>
                 <div class="box-lid"></div>
             </div>
